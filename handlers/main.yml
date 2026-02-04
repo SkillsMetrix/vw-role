@@ -1,0 +1,9 @@
+- name: restart-nginx
+  service:
+   name: nginx
+   state: restarted
+  notify: show-message
+
+- name: show-message
+  debug:
+    msg: 'done'

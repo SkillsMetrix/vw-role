@@ -1,0 +1,14 @@
+- name: install server
+  apt:
+    name: nginx
+    state: latest
+    update_cache: yes
+
+
+- name: copy source file
+  template: src=files/index.html dest=/usr/share/nginx/html/index.html
+
+- name: copy source file
+  template: src=files/update.html dest=/usr/share/nginx/html/index.html
+  notify: 
+    - restart-nginx
