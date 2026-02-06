@@ -1,16 +1,35 @@
-- hosts: all
-  become: yes
+from ansible.module_utils.basic import AnsibleModule
+import subprocess
 
-  roles:
-    - myorg.web.nginx_install
+def run_module():
+    module = AnsibleModule(
+        argument_spec=dict(
+            name=dict(type='str', required=True)
+        ),
+        supports_check_mode=True
+    )
 
-  tasks:
-    - name: Check nginx service status using custom module
-      myorg.web.service_status:
-        name: apache2
-      register: apache_status
+    service_name = module.params['name']
 
-    - name: Print apache status
-      debug:
-        msg: "Nginx status is {{ apache_status.status }}"
-    - name: Print apache filter status
+    try:
+        result = subprocess.run(
+            ["systemctl", "is-active", service_name],
+            capture_output=True,
+            text=True
+        )
+
+        status = result.stdout.strip()
+    except Exception as e:
+        module.fail_json(msg=str(e))
+
+    module.exit_json(
+        changed=False,
+        service=service_name,
+        status=status
+    )
+
+def main():
+    run_module()
+
+if __name__ == '__main__':
+    main()
