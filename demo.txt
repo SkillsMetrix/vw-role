@@ -1,22 +1,13 @@
+def to_dash_case(value):
+    
+    return value.strip().lower().replace(" ","-")
 
-- name: Launch EC2 with Lookup, Filters, Callback
-  hosts: localhost
-  gather_facts: false
-  vars:
-    instance_name: "my-test-ec2"
-    ami_id: "{{ lookup('file', 'ami_id.txt') }}"
-    upper_name: "{{ instance_name | upper }}"
-    instance_type: "t2.micro"
+def double(value):
+    return value * 2
 
-  tasks:
-    - name: Print raw AMI ID (Lookup plugin)
-      debug:
-        msg: "AMI ID from file: {{ ami_id }}"
-
-    - name: Print uppercased instance name (Filter plugin)
-      debug:
-        msg: "Uppercased instance name: {{ upper_name }}"
-
-    - name: Simulate EC2 instance launch
-      debug:
-        msg: "Launching EC2 with AMI={{ ami_id }}, Name={{ upper_name }}, Type={{ instance_type }}"
+class FilterModule(object):
+    def filters(self):
+        return {
+            'to_dash_case': to_dash_case,
+            'double': double
+        }
