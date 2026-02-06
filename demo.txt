@@ -1,13 +1,16 @@
-def to_dash_case(value):
-    
-    return value.strip().lower().replace(" ","-")
+- hosts: all
+  become: yes
 
-def double(value):
-    return value * 2
+  roles:
+    - myorg.web.nginx_install
 
-class FilterModule(object):
-    def filters(self):
-        return {
-            'to_dash_case': to_dash_case,
-            'double': double
-        }
+  tasks:
+    - name: Check nginx service status using custom module
+      myorg.web.service_status:
+        name: apache2
+      register: apache_status
+
+    - name: Print apache status
+      debug:
+        msg: "Nginx status is {{ apache_status.status }}"
+    - name: Print apache filter status
